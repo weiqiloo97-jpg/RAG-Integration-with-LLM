@@ -1,0 +1,37 @@
+{
+  "system": "ChromaDB+SentenceTransformers",
+  "results": {
+    "Vector": {
+      "hit_rate_%": 87.5,
+      "precision@5": 0.7,
+      "recall@5": 0.1408,
+      "MRR": 0.8125,
+      "avg_similarity": 0.4346,
+      "avg_query_time_ms": 28.07
+    },
+    "BM25": {
+      "hit_rate_%": 75.0,
+      "precision@5": 0.5,
+      "recall@5": 0.1293,
+      "MRR": 0.5667,
+      "avg_similarity": 0.2738,
+      "avg_query_time_ms": 6.01
+    },
+    "Hybrid": {
+      "hit_rate_%": 87.5,
+      "precision@5": 0.75,
+      "recall@5": 0.1401,
+      "MRR": 0.75,
+      "avg_similarity": 0.1951,
+      "avg_query_time_ms": 40.42
+    },
+    "Hybrid+Rerank": {
+      "hit_rate_%": 87.5,
+      "precision@5": 0.75,
+      "recall@5": 0.1401,
+      "MRR": 0.875,
+      "avg_similarity": 0.1074,
+      "avg_query_time_ms": 121.52
+    }
+  }
+}
