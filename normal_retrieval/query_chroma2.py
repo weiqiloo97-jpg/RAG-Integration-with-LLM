@@ -41,7 +41,7 @@ def query_vector_db(query_text, top_k=3):
         meta = metadatas[i] or {}
         distance = round(distances[i], 4)  # lower = more similar
 
-        print(f"\n[{i+1}] ID: {ids[i]} | L2 Distance: {distance}  (lower = better match)")
+        print(f"\n[{i+1}] ID: {ids[i]} | L2 Distance: {distance}")
         print(f"    Source File: {meta.get('source_file', 'unknown')}")
         print(f"    Page: {meta.get('source_page', 'unknown')} | Company: {meta.get('company', 'unknown')}")
         print(f"    Document Snippet:")
