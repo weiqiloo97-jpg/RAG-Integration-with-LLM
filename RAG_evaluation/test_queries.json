@@ -1,0 +1,30 @@
+[
+  {
+    "question": "Who directed the 1903 Western short film The Great Train Robbery?",
+    "ground_truth": "The Great Train Robbery was directed by Edwin S. Porter.",
+    "relevant_documents": [
+      "Title: The Great Train Robbery. Genres: Short, Western. Cast: A.C. Abadie, Gilbert M. 'Broncho Billy' Anderson, George Barnes, Justus D. Barnes. Directors: Edwin S. Porter. Countries: USA."
+    ]
+  },
+  {
+    "question": "Tell me about the early animation comedy short featuring Gertie the Dinosaur by Winsor McCay.",
+    "ground_truth": "Gertie the Dinosaur is a 1914 animation short comedy written and directed by Winsor McCay, featuring cast members Winsor McCay, George McManus, and Roy L. McCardell.",
+    "relevant_documents": [
+      "Title: Gertie the Dinosaur. Genres: Animation, Short, Comedy. Cast: Winsor McCay, George McManus, Roy L. McCardell. Directors: Winsor McCay. Writers: Winsor McCay. Countries: USA. Languages: English. Year: 1914."
+    ]
+  },
+  {
+    "question": "What crime drama film was released in 1913 directed by George Loane Tucker?",
+    "ground_truth": "Traffic in Souls is a 1913 crime drama film directed by George Loane Tucker.",
+    "relevant_documents": [
+      "Title: Traffic in Souls. Genres: Crime, Drama. Cast: Jane Gail, Ethel Grandin, William H. Turner, Matt Moore. Directors: George Loane Tucker. Countries: USA. Languages: English. Year: 1913."
+    ]
+  },
+  {
+    "question": "Which 1909 short drama movie was directed by D.W. Griffith?",
+    "ground_truth": "A Corner in Wheat is a 1909 short drama film directed by D.W. Griffith.",
+    "relevant_documents": [
+      "Title: A Corner in Wheat. Genres: Short, Drama. Cast: Frank Powell, Grace Henderson, James Kirkwood, Linda Arvidson. Directors: D.W. Griffith. Countries: USA. Languages: English. Year: 1909."
+    ]
+  }
+]

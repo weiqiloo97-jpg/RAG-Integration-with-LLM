@@ -1,0 +1,5 @@
+Model,Faithfulness,Answer Relevancy,Context Precision,Context Recall,Noise Sensitivity,Robustness
+Vector RAG,1.0000,0.3458,0.6250,0.7708,0.4264,0.2321
+BM25 RAG,1.0000,0.2058,1.0000,0.9583,0.5365,0.7738
+Hybrid RAG,1.0000,0.2205,1.0000,0.9583,0.5365,0.5625
+Hybrid + Rerank,1.0000,0.2948,1.0000,0.9583,0.4959,0.4236
