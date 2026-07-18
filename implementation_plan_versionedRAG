@@ -1,0 +1,119 @@
+# Versioned RAG System — Tier 3 Evaluation Metrics
+
+## Background
+
+The project already has a working RAG evaluation pipeline for Tier 1 (retrieval) and Tier 2 (generation quality) metrics operating on a movie ChromaDB database. We now extend it with a **Versioned RAG** subsystem that ingests Bootstrap release `.md` files from `versioned_articles/` (v5.2.3 → v5.3.5), manages document versions in SQLite + ChromaDB, and measures four Tier 3 metrics specific to temporal/versioned knowledge bases.
+
+## Architecture
+
+```
+versioned_articles/*.md  →  VersionedKBManager (parses & ingests)
+                              ├── SQLite  (version_metadata.db)  — tracks doc_id, version, timestamp, checksum
+                              └── ChromaDB collection ("versioned_kb")  — stores embeddings per chunk
+
+VersionedRAGRetriever   →  queries ChromaDB by version-aware filter + ranks results
+VersionedRAGGenerator   →  wraps existing AnswerGenerator / FallbackLLM
+run_versioned_eval.py   →  orchestrates metrics and prints tables
+```
+
+## Tier 3 Metrics Definitions
+
+| Metric | Description | How Computed |
+|---|---|---|
+| **Temporal Leakage Rate** | % of queries that return chunks from a *newer* version than the query's target version | For each query pinned to a specific version, check if any retrieved chunk has a `version_date > target_date`. Fraction of such queries = leakage rate. |
+| **Change Detection Accuracy** | How accurately the system flags "changed" content between consecutive versions | Compare content checksums (SHA-256) between consecutive version pairs. True Changed = checksum differs. Detected Changed = cosine similarity of embeddings drops below threshold. F1 of detected vs true. |
+| **Update Efficiency** | Ratio of chunks actually re-embedded (re-indexed) vs. total chunks when a new version is ingested | Only changed/new chunks should be re-embedded. `updated_chunks / total_chunks` per version ingestion. Lower = more efficient (only updated what changed). |
+| **p50 / p95 / p99 Query Latency** | Percentile latency of versioned retrieval across all queries | Collect wall-clock time for each retrieve call, compute numpy percentiles. |
+
+## Files to Create
+
+---
+
+### retrieval/
+
+#### [NEW] [versionedrag_retriever.py](file:///c:/Users/weiqi/RAG%20Project/RAG_evaluation/retrieval/versionedrag_retriever.py)
+- `VersionedRAGRetriever` class
+- Accepts optional `target_version` string to filter ChromaDB results by `version` metadata
+- Returns docs with `version`, `source_file`, `chunk_index` metadata
+- Records per-query latency for percentile computation
+
+---
+
+### generation/
+
+#### [NEW] [versionedrag_generator.py](file:///c:/Users/weiqi/RAG%20Project/RAG_evaluation/generation/versionedrag_generator.py)
+- `VersionedKBManager` class — parses `.md` files, tracks checksums, ingests to SQLite + ChromaDB
+- `VersionedAnswerGenerator` — thin wrapper around existing `AnswerGenerator` / `FallbackLLM` with version-aware prompt prefix
+- Handles version-aware prompt injection: prepends the target version to LLM context
+
+---
+
+### evaluation/
+
+#### [NEW] [tier3_metrics.py](file:///c:/Users/weiqi/RAG%20Project/RAG_evaluation/evaluation/tier3_metrics.py)
+- `compute_temporal_leakage_rate(queries_with_versions, retrieved_results_with_metadata)`
+- `compute_change_detection_accuracy(version_pairs, embed_model, threshold)`
+- `compute_update_efficiency(kb_manager)` — reads ingestion stats from SQLite
+- `compute_latency_percentiles(latencies)` — p50, p95, p99
+
+---
+
+### Root (runner)
+
+#### [NEW] [run_versioned_eval.py](file:///c:/Users/weiqi/RAG%20Project/RAG_evaluation/run_versioned_eval.py)
+- Standalone runner, no dependency on existing `run_evaluation.py`
+- Initializes `VersionedKBManager` → ingests all 6 `.md` versions into ChromaDB + SQLite
+- Defines ~6 sample queries (each pinned to a specific version)
+- Runs all Tier 3 metrics
+- Prints two formatted tables:
+  1. **Metrics Summary** — Temporal Leakage Rate, Change Detection Accuracy, Update Efficiency, p50/p95/p99 Latency
+  2. **Sample Query Results** — Query | Target Version | Retrieved Version(s) | LLM Answer
+
+---
+
+## Data Flow (versioned_articles → output)
+
+```
+1. VersionedKBManager.ingest_all()
+   └─ For each .md file:
+       a. Parse version string (e.g., "v5.3.1") and release date from filename/content
+       b. Chunk content into ~300-token paragraphs
+       c. Compute SHA-256 checksum of each chunk
+       d. Compare against SQLite for prior version of same logical section
+       e. Re-embed only NEW or CHANGED chunks (update_efficiency tracking)
+       f. Upsert into ChromaDB with metadata: {version, version_date, source_file, checksum}
+       g. Record in SQLite: (chunk_id, version, version_date, checksum, changed_flag)
+
+2. VersionedRAGRetriever.retrieve(query, target_version=None)
+   └─ Dense similarity search in ChromaDB
+   └─ If target_version given: filter where metadata.version == target_version (strict) 
+      OR filter where metadata.version_date <= target_version_date (inclusive history)
+   └─ Return docs + latency
+
+3. run_versioned_eval.py runs 6 queries across versions → computes all Tier 3 metrics
+```
+
+## Open Questions
+
+> [!IMPORTANT]
+> **No external LLM required**: The runner will prefer Ollama if running, else FallbackLLM — consistent with existing behavior.
+
+> [!NOTE]
+> **ChromaDB collection isolation**: The versioned KB will use a **separate** ChromaDB collection named `"versioned_kb"` (not `"mflix"`), stored in the same `./chroma_store` directory. This avoids polluting the existing movie database.
+
+> [!NOTE]
+> **SQLite DB path**: Will be placed at `./versioned_kb_metadata.db` (relative to project root), alongside the existing `chroma_store`.
+
+## Verification Plan
+
+### Automated Tests
+```bash
+cd "c:\Users\weiqi\RAG Project"
+python RAG_evaluation/run_versioned_eval.py
+```
+
+### Expected Output
+- Terminal prints ingestion summary (articles parsed, chunks indexed, update efficiency per version)
+- Terminal prints Tier 3 metrics summary table
+- Terminal prints sample query + answer table (6+ rows)
+- No import errors or crashes
