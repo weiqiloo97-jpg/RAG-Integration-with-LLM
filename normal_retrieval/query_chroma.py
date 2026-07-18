@@ -1,5 +1,5 @@
 """
-ChromaDB RAG Evaluation — Extended (no API key required)
+ChromaDB RAG Evaluation — Movie Database
 ==========================================================
 Tests: Vector search · BM25 · Hybrid · Reranking
 Metrics: Precision@K · Recall@K · MRR · Hit Rate · Avg Similarity · Avg Query Time

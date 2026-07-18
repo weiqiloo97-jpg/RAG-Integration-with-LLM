@@ -1,3 +1,9 @@
+"""
+ChromaDB RAG Evaluation — Chao Yuan's database
+==========================================================
+Tests: Vector search · BM25 · Hybrid · Reranking
+Metrics: Precision@K · Recall@K · MRR · Hit Rate · Avg Similarity · Avg Query Time
+"""
 import sys
 import chromadb
 from sentence_transformers import SentenceTransformer

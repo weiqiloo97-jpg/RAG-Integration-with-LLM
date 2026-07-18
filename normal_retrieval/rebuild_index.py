@@ -1,7 +1,9 @@
-#connects to my_local_database
-#fetches all 2,396 documents and their metadata from lanagchain collection
-#deletes the old corrupted langchain collection and creates a new langchain collection
-#re-adds the documents in batches 
+"""
+connects to my_local_database
+fetches all 2,396 documents and their metadata from lanagchain collection
+deletes the old corrupted langchain collection and creates a new langchain collection
+re-adds the documents in batches
+"""
 
 import os
 import chromadb
