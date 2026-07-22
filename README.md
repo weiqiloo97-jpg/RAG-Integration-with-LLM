@@ -1,76 +1,224 @@
-# Versioned RAG System & Evaluation Framework
+# RAG Evaluation Framework
 
-A Version-Aware Retrieval-Augmented Generation (RAG) framework with PDF & Markdown ingestion, chunk-level change detection, multi-run incremental update benchmarking, and 100-query statistical evaluation.
+A comprehensive Retrieval-Augmented Generation (RAG) evaluation framework that compares different RAG architectures, including traditional RAG and Version-Aware RAG.
+
+The system supports document ingestion, vector retrieval, version-aware retrieval, and multi-tier performance evaluation to analyse retrieval accuracy, temporal consistency, efficiency, and latency.
 
 ---
 
-## 1. Installation
+# 1. Project Overview
 
-Install all required Python dependencies:
+This project investigates whether version-aware retrieval improves the performance of traditional RAG systems when handling evolving documents.
 
-```bash
+The framework compares multiple RAG approaches:
+
+## Baseline RAG
+A standard vector-based Retrieval-Augmented Generation pipeline.
+
+Workflow:
+
+```
+Documents
+    |
+Chunking
+    |
+Embedding Generation
+    |
+Vector Database
+    |
+Similarity Retrieval
+    |
+LLM Answer Generation
+```
+
+---
+
+## GraphRAG
+
+A retrieval approach enhanced with knowledge relationships between document entities and metadata.
+
+The system constructs additional structural information to improve retrieval over related concepts.
+
+---
+
+## VersionRAG
+
+A version-aware RAG system designed for evolving document collections.
+
+Unlike traditional RAG, VersionRAG preserves document versions and tracks changes between releases.
+
+Key features:
+
+- Version-aware document storage
+- Chunk-level change detection
+- Incremental knowledge base updates
+- Temporal leakage prevention
+- Efficient re-indexing of modified content only
+
+Example:
+
+```
+Apache Spark v3.4.4
+        |
+        |
+        v
+Apache Spark v3.5.4
+```
+
+Instead of rebuilding the entire database, VersionRAG identifies changed chunks and updates only affected information.
+
+---
+
+# 2. Evaluation Framework
+
+The project evaluates RAG performance using three evaluation tiers.
+
+---
+
+# Tier 1: Retrieval Performance Evaluation
+
+Measures whether the retriever returns relevant information.
+
+Metrics include:
+
+### Retrieval Accuracy
+Evaluates whether retrieved documents match the expected answer source.
+
+### Hit Rate
+Measures whether the correct document appears within retrieved results.
+
+### Precision / Recall
+Analyses retrieval quality.
+
+### Mean Reciprocal Rank (MRR)
+Measures how highly the correct result is ranked.
+
+---
+
+# Tier 2: Generation Quality Evaluation
+
+Evaluates the final generated answers from the LLM.
+
+Metrics include:
+
+### Faithfulness
+Whether the generated answer is supported by retrieved context.
+
+### Answer Relevance
+Whether the response correctly answers the query.
+
+### Context Utilisation
+Measures whether retrieved information contributes to the final answer.
+
+---
+
+# Tier 3: Version-Aware Evaluation
+
+Additional metrics designed specifically for VersionRAG.
+
+## Temporal Leakage Rate
+
+Measures whether the system retrieves information from incorrect document versions.
+
+Example:
+
+Query:
+
+```
+What changed in Bootstrap v5.3.4?
+```
+
+Incorrect retrieval:
+
+```
+Bootstrap v5.3.5 information
+```
+
+This is considered temporal leakage.
+
+---
+
+## Change Detection Accuracy
+
+Evaluates whether VersionRAG correctly identifies:
+
+- Added chunks
+- Deleted chunks
+- Modified chunks
+
+between document versions.
+
+---
+
+## Incremental Update Efficiency
+
+Compares:
+
+Traditional approach:
+
+```
+Delete database
+        |
+Re-index everything
+```
+
+against:
+
+VersionRAG:
+
+```
+Detect changed chunks
+        |
+Update only affected content
+```
+
+Metrics:
+
+- Execution time
+- Number of processed chunks
+- Number of regenerated embeddings
+- Speed improvement ratio
+
+---
+
+## Query Latency
+
+Measures retrieval speed using:
+
+- p50 latency
+- p95 latency
+- p99 latency
+
+These statistics evaluate normal and worst-case retrieval performance.
+
+---
+
+# 3. Build Instruction
+
+Windows PowerShell:
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install required packages:
+```powershell
 pip install -r requirements.txt
 ```
 
-### Dependencies
-- `pypdf`: PDF text extraction and page parsing.
-- `chromadb`: Vector database for embedding storage and similarity retrieval.
-- `sentence-transformers`: Local embedding model (`all-MiniLM-L6-v2`).
-- `pandas` & `numpy`: Data processing and latency percentile calculations.
-- `httpx`: Optional connection to Ollama LLM.
+Run the main program:
 
----
-
-## 2. Ingestion Pipeline
-
-The pipeline supports both **PDF** and **Markdown** documents located in `versioned_articles/`:
-
-- **PDF Ingestion**: `ingestion/pdf_processor.py` extracts page text, identifies section headers, and chunks document text.
-- **Rich Metadata Preservation**:
-  - `document_name`
-  - `document_version`
-  - `page_number`
-  - `section_header`
-  - `chunk_id`
-  - `content_hash`
-  - `timestamp`
-- **Optional Embedding Cache**: Toggleable via `use_embedding_cache=True` in `VersionedKBManager` to cache chunk embeddings by SHA-256 hash.
-
----
-
-## 3. How to Run Indexing & Evaluation
-
-Run the master evaluation runner:
-
-```bash
-python RAG_evaluation/run_versioned_eval.py
+```powershell
+python src/main.py
 ```
 
-### What this command executes:
-1. **Document Ingestion**: Parses `.pdf` (Spark release notes) and `.md` (Bootstrap releases) from `versioned_articles/` into ChromaDB (`versioned_chroma_store`) and SQLite (`versioned_kb_metadata.db`).
-2. **Stage 1 Evaluation (100 Queries)**: Executes 100 version-pinned queries retrieval-only without LLM overhead. Calculates Temporal Leakage Rate and latency percentiles (p50, p95, p99).
-3. **Stage 2 Evaluation (20 Queries)**: Generates natural language answers for a 20-query subset (using local Ollama `llama3` or fallback LLM).
-4. **Version Change Detection Analysis**: Evaluates detected added/deleted/modified chunks against `change_ground_truth.json`.
-5. **Incremental Update Experiment**: Runs 3-5 iterations comparing **Full Re-indexing** vs **Incremental Update** and reports averaged execution time, processed chunks, generated embeddings, and Update Efficiency speedup ratio.
+The program will:
 
----
+1. Load and preprocess documents
+2. Generate embeddings
+3. Build vector indexes
+4. Execute retrieval experiments
+5. Run RAG evaluation metrics
+6. Generate performance reports
+- Retrieval performance
 
-## 4. Generated CSV Reports
-
-Results are automatically saved to the root directory as CSV files suitable for statistical analysis:
-
-1. **`query_results.csv`**:
-   - `query_id`, `query`, `expected_version`, `retrieved_version`, `retrieved_chunks`, `temporal_leak`, `retrieval_latency_ms`
-2. **`change_detection_results.csv`**:
-   - `document_version_old`, `document_version_new`, `detected_changes`, `actual_changes`, `correct_detection`
-3. **`update_efficiency_results.csv`**:
-   - `experiment_type`, `execution_time`, `chunks_processed`, `embeddings_generated`
-4. **`latency_results.csv`**:
-   - `query_id`, `latency_ms`
-
----
-
-## 5. System Limitations & Future Work
-
-- **Complex PDF Layouts**: PDF text extraction uses `pypdf`. Multicolumn tables or scanned image PDFs may require OCR (e.g. `pytesseract` or `pdfplumber`).
-- **Semantic Change Thresholding**: Embedding similarity change detection threshold is currently set to `0.95`. Dynamic thresholding based on chunk length can further refine precision.
+while comparing traditional RAG approaches against VersionRAG.
