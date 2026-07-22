@@ -225,9 +225,9 @@ def main():
     correct_det_count = sum(1 for r in change_eval_rows if r["correct_detection"])
     change_acc = (correct_det_count / len(change_eval_rows)) * 100.0 if change_eval_rows else 0.0
 
-    # --- Step 5: Multi-Run Incremental Update Benchmark ---
-    print("\n[Step 5] Running Multi-Run Incremental Update Experiment...")
-    update_eff_rows = run_single_iteration(articles_dir=articles_dir, num_runs=3)
+    # --- Step 5: Incremental Update Benchmark ---
+    print("\n[Step 5] Running Incremental Update Benchmark Experiment...")
+    update_eff_rows = run_single_iteration(articles_dir=articles_dir)
     df_update_res = pd.DataFrame(update_eff_rows)
     df_update_res.to_csv(update_eff_csv, index=False)
     print(f"   [Saved] update_efficiency_results.csv ({len(df_update_res)} rows)")
@@ -243,14 +243,16 @@ def main():
     print(_table_row("Metric", "Score", "Notes", widths=w))
     print(_hr("-"))
 
-    full_t = df_update_res[df_update_res["experiment_type"] == "Full Re-indexing"]["execution_time"].values[0]
-    inc_t = df_update_res[df_update_res["experiment_type"] == "Incremental Update"]["execution_time"].values[0]
-    speedup = round(full_t / inc_t, 2) if inc_t > 0 else 1.0
+    full_t = float(df_update_res["full_reindex_time"].iloc[0])
+    inc_t = float(df_update_res["incremental_update_time"].iloc[0])
+    chunks_f = int(df_update_res["chunks_processed_full"].iloc[0])
+    chunks_i = int(df_update_res["chunks_processed_incremental"].iloc[0])
+    speedup = float(df_update_res["update_efficiency_ratio"].iloc[0])
 
     summary_rows = [
         ("Temporal Leakage Rate", f"{leak_rate:.2f}%", f"{leaky_count}/{len(queries_data)} queries leaked"),
         ("Change Detection Accuracy", f"{change_acc:.2f}%", f"{correct_det_count}/{len(change_eval_rows)} pairs correct"),
-        ("Incremental Update Efficiency", f"{speedup:.2f}x Speedup", f"Full: {full_t:.3f}s vs Inc: {inc_t:.3f}s"),
+        ("Incremental Update Efficiency", f"{speedup:.2f}x Speedup", f"Full: {full_t:.3f}s ({chunks_f} embs) vs Inc: {inc_t:.3f}s ({chunks_i} embs)"),
         ("Query Latency p50", f"{lat_stats['p50_ms']:.3f} ms", f"Over {len(queries_data)} queries"),
         ("Query Latency p95", f"{lat_stats['p95_ms']:.3f} ms", ""),
         ("Query Latency p99", f"{lat_stats['p99_ms']:.3f} ms", f"Mean={lat_stats['mean_ms']:.3f} ms"),

@@ -1,3 +1,2 @@
-experiment_type,execution_time,chunks_processed,embeddings_generated
-Full Re-indexing,181.873,1528,1528
-Incremental Update,148.7444,1528,889
+full_reindex_time,incremental_update_time,chunks_processed_full,chunks_processed_incremental,update_efficiency_ratio
+173.0468,25.0761,1529,2,6.9

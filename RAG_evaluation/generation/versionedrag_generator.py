@@ -293,6 +293,29 @@ class VersionedKBManager:
             print(f"   [Warning] No .md or .pdf files found in {self.articles_dir}")
             return {}
 
+        # Handle deleted files: remove chunks from ChromaDB & SQLite if source_file is no longer in articles_dir
+        conn = sqlite3.connect(self.sqlite_path)
+        db_sources = {
+            row[0] for row in conn.execute("SELECT DISTINCT source_file FROM chunk_versions").fetchall()
+        }
+        present_sources = {p.name for p in all_files}
+        deleted_sources = db_sources - present_sources
+
+        for del_file in deleted_sources:
+            del_rows = conn.execute(
+                "SELECT chunk_id FROM chunk_versions WHERE source_file = ?", (del_file,)
+            ).fetchall()
+            del_ids = [r[0] for r in del_rows]
+            if del_ids:
+                try:
+                    self.collection.delete(ids=del_ids)
+                except Exception:
+                    pass
+                conn.execute("DELETE FROM chunk_versions WHERE source_file = ?", (del_file,))
+                conn.commit()
+                print(f"   [Deleted File] Removed {len(del_ids)} chunks for deleted file '{del_file}'")
+        conn.close()
+
         print(f"\n[KB] Ingesting {len(all_files)} versioned documents (PDF & MD) into ChromaDB ...")
 
         for file_path in all_files:
@@ -313,7 +336,7 @@ class VersionedKBManager:
                 for idx, chunk in enumerate(md_chunks):
                     c_hash = _sha256(chunk)
                     chunks_raw.append({
-                        "chunk_id": f"{version}__chunk_{idx}",
+                        "chunk_id": f"{source_file}__{version}__chunk_{idx}",
                         "text": chunk,
                         "document_name": doc_name,
                         "document_version": version,

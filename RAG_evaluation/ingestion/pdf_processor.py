@@ -121,7 +121,7 @@ def process_pdf_file(pdf_path: str, max_chunk_chars: int = 800) -> List[Dict[str
             else:
                 if current_chunk:
                     content_hash = hashlib.sha256(current_chunk.encode("utf-8")).hexdigest()
-                    chunk_id = f"{doc_version}_p{page_num}_c{global_chunk_idx}"
+                    chunk_id = f"{filename}__{doc_version}_p{page_num}_c{global_chunk_idx}"
                     chunks_data.append({
                         "chunk_id": chunk_id,
                         "text": current_chunk,
@@ -139,7 +139,7 @@ def process_pdf_file(pdf_path: str, max_chunk_chars: int = 800) -> List[Dict[str
 
         if current_chunk:
             content_hash = hashlib.sha256(current_chunk.encode("utf-8")).hexdigest()
-            chunk_id = f"{doc_version}_p{page_num}_c{global_chunk_idx}"
+            chunk_id = f"{filename}__{doc_version}_p{page_num}_c{global_chunk_idx}"
             chunks_data.append({
                 "chunk_id": chunk_id,
                 "text": current_chunk,
