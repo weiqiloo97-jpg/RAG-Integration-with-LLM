@@ -205,10 +205,10 @@ Install required packages:
 pip install -r requirements.txt
 ```
 
-Run the main program:
+Run from project root:
 
 ```powershell
-python src/main.py
+python RAG_evaluation/run_versioned_eval.py
 ```
 
 The program will:
