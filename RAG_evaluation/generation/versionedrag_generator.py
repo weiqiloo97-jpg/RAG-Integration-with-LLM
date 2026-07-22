@@ -31,13 +31,24 @@ from generation.answer_generator import AnswerGenerator, LLMWrapper, FallbackLLM
 # ---------------------------------------------------------------------------
 # Version ordering map  (used to compare versions chronologically)
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Version ordering map  (used to compare versions chronologically)
+# ---------------------------------------------------------------------------
 _VERSION_DATES = {
+    # Bootstrap releases
     "v5.2.3": datetime.date(2022, 11, 22),
     "v5.3.1": datetime.date(2023, 7, 26),
     "v5.3.2": datetime.date(2023, 9, 14),
     "v5.3.3": datetime.date(2024, 2, 20),
-    "v5.3.4": datetime.date(2025, 6, 1),    # "last week" from today, approx
-    "v5.3.5": datetime.date(2025, 6, 8),    # "last week" from today, approx
+    "v5.3.4": datetime.date(2025, 6, 1),
+    "v5.3.5": datetime.date(2025, 6, 8),
+    # Apache Spark releases
+    "v2.4.7": datetime.date(2020, 9, 12),
+    "v3.3.4": datetime.date(2023, 12, 1),
+    "v3.4.4": datetime.date(2024, 10, 20),
+    "v3.5.3": datetime.date(2024, 9, 25),
+    "v3.5.4": datetime.date(2024, 12, 18),
+    "v3.5.5": datetime.date(2025, 3, 1),
 }
 
 
@@ -48,11 +59,14 @@ def _version_date(version: str) -> datetime.date:
 
 def _parse_version_from_filename(filename: str) -> str:
     """
-    Extracts version string like 'v5.3.1' from filenames of the form
-    'Release v5.3.1 · twbs_bootstrap.md'.
+    Extracts version string like 'v5.3.1' or 'v3.5.4' from filenames.
     """
-    match = re.search(r"(v\d+\.\d+\.\d+)", filename)
-    return match.group(1) if match else "unknown"
+    match = re.search(r"v?(\d+\.\d+\.\d+)", filename, re.IGNORECASE)
+    if match:
+        v = match.group(1)
+        return f"v{v}" if not v.startswith("v") else v
+    return "unknown"
+
 
 
 def _chunk_text(text: str, max_chars: int = 800) -> list:
@@ -107,18 +121,20 @@ def _sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+
 # ---------------------------------------------------------------------------
 # VersionedKBManager
 # ---------------------------------------------------------------------------
 
 class VersionedKBManager:
     """
-    Manages versioned KB articles:
-    - Parses .md files from a folder
-    - Chunks and checksums each piece
+    Manages versioned KB articles (Markdown & PDF):
+    - Parses .md and .pdf files from a folder
+    - Chunks, checksums, and attaches rich metadata:
+      document_name, document_version, page_number, section_header, chunk_id, content_hash, timestamp
     - Tracks versions in SQLite (versioned_kb_metadata.db)
     - Embeds only NEW or CHANGED chunks into ChromaDB ("versioned_kb" collection)
-    - Exposes ingestion statistics for Update Efficiency metric
+    - Optional embedding cache to prevent redundant embedding calculations
     """
 
     def __init__(
@@ -128,16 +144,18 @@ class VersionedKBManager:
         sqlite_path: str = "./versioned_kb_metadata.db",
         collection_name: str = "versioned_kb",
         embed_model_name: str = "all-MiniLM-L6-v2",
+        use_embedding_cache: bool = False,
     ):
         self.articles_dir = Path(articles_dir)
         self.db_path = db_path
         self.sqlite_path = sqlite_path
         self.collection_name = collection_name
+        self.use_embedding_cache = use_embedding_cache
 
         # Embedding model
         self.embed_model = SentenceTransformer(embed_model_name)
 
-        # ChromaDB setup — reuse same chroma_store with a distinct collection
+        # ChromaDB setup
         self.chroma_client = chromadb.PersistentClient(path=db_path)
         self.collection = self.chroma_client.get_or_create_collection(
             name=collection_name,
@@ -147,151 +165,215 @@ class VersionedKBManager:
         # SQLite setup
         self._init_sqlite()
 
-        # Ingestion stats (populated during ingest_all)
-        # Keys: version string → {"total": int, "updated": int}
+        # Ingestion stats
         self.ingestion_stats: dict = {}
 
-    # ------------------------------------------------------------------
-    # SQLite helpers
-    # ------------------------------------------------------------------
-
     def _init_sqlite(self):
-        """Creates the version-tracking table if it does not exist."""
+        """Creates metadata and optional embedding cache tables in SQLite with schema migration."""
         conn = sqlite3.connect(self.sqlite_path)
         conn.execute("""
             CREATE TABLE IF NOT EXISTS chunk_versions (
-                chunk_id      TEXT PRIMARY KEY,
-                version       TEXT NOT NULL,
-                version_date  TEXT NOT NULL,
-                source_file   TEXT NOT NULL,
-                chunk_index   INTEGER NOT NULL,
-                checksum      TEXT NOT NULL,
-                changed_flag  INTEGER NOT NULL DEFAULT 1,
-                ingested_at   TEXT NOT NULL
+                chunk_id          TEXT PRIMARY KEY,
+                document_name     TEXT NOT NULL DEFAULT '',
+                version           TEXT NOT NULL,
+                version_date      TEXT NOT NULL,
+                page_number       INTEGER NOT NULL DEFAULT 1,
+                section_header    TEXT NOT NULL DEFAULT '',
+                source_file       TEXT NOT NULL,
+                chunk_index       INTEGER NOT NULL,
+                checksum          TEXT NOT NULL,
+                changed_flag      INTEGER NOT NULL DEFAULT 1,
+                ingested_at       TEXT NOT NULL
+            )
+        """)
+
+        # Migration check: ensure missing columns are added if table existed prior to schema update
+        cursor = conn.execute("PRAGMA table_info(chunk_versions)")
+        existing_cols = {row[1] for row in cursor.fetchall()}
+        
+        if "document_name" not in existing_cols:
+            conn.execute("ALTER TABLE chunk_versions ADD COLUMN document_name TEXT NOT NULL DEFAULT ''")
+        if "page_number" not in existing_cols:
+            conn.execute("ALTER TABLE chunk_versions ADD COLUMN page_number INTEGER NOT NULL DEFAULT 1")
+        if "section_header" not in existing_cols:
+            conn.execute("ALTER TABLE chunk_versions ADD COLUMN section_header TEXT NOT NULL DEFAULT ''")
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS embedding_cache (
+                content_hash  TEXT PRIMARY KEY,
+                embedding_json TEXT NOT NULL
             )
         """)
         conn.commit()
         conn.close()
 
-    def _get_prior_checksum(self, logical_key: str) -> Optional[str]:
-        """
-        Returns the checksum of the most recently ingested version of a
-        logical chunk key (source_file + chunk_index), or None if never seen.
-        """
+
+    def _get_prior_checksum(self, source_file: str, chunk_index: int) -> Optional[str]:
+        """Returns prior checksum for (source_file, chunk_index)."""
         conn = sqlite3.connect(self.sqlite_path)
         row = conn.execute(
             """
             SELECT checksum FROM chunk_versions
             WHERE source_file = ? AND chunk_index = ?
-            ORDER BY version_date DESC
+            ORDER BY ingested_at DESC
             LIMIT 1
             """,
-            logical_key,
+            (source_file, chunk_index),
         ).fetchone()
         conn.close()
         return row[0] if row else None
 
-    def _record_chunk(
-        self,
-        chunk_id: str,
-        version: str,
-        version_date: datetime.date,
-        source_file: str,
-        chunk_index: int,
-        checksum: str,
-        changed: bool,
-    ):
+    def _get_cached_embedding(self, content_hash: str) -> Optional[list]:
+        """Fetch cached embedding by content hash if optional cache is enabled."""
+        if not self.use_embedding_cache:
+            return None
+        conn = sqlite3.connect(self.sqlite_path)
+        row = conn.execute(
+            "SELECT embedding_json FROM embedding_cache WHERE content_hash = ?",
+            (content_hash,)
+        ).fetchone()
+        conn.close()
+        if row:
+            import json
+            return json.loads(row[0])
+        return None
+
+    def _save_cached_embedding(self, content_hash: str, embedding: list):
+        """Save embedding into cache if enabled."""
+        if not self.use_embedding_cache:
+            return
+        import json
+        conn = sqlite3.connect(self.sqlite_path)
+        conn.execute(
+            "INSERT OR REPLACE INTO embedding_cache (content_hash, embedding_json) VALUES (?, ?)",
+            (content_hash, json.dumps(embedding)),
+        )
+        conn.commit()
+        conn.close()
+
+    def _record_chunk(self, chunk_data: dict, changed: bool, v_date: datetime.date):
         """Upserts a chunk record into SQLite."""
         conn = sqlite3.connect(self.sqlite_path)
         conn.execute(
             """
             INSERT OR REPLACE INTO chunk_versions
-              (chunk_id, version, version_date, source_file, chunk_index, checksum, changed_flag, ingested_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              (chunk_id, document_name, version, version_date, page_number, section_header,
+               source_file, chunk_index, checksum, changed_flag, ingested_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                chunk_id,
-                version,
-                version_date.isoformat(),
-                source_file,
-                chunk_index,
-                checksum,
+                chunk_data["chunk_id"],
+                chunk_data.get("document_name", "Unknown Document"),
+                chunk_data["document_version"],
+                v_date.isoformat(),
+                chunk_data.get("page_number", 1),
+                chunk_data.get("section_header", ""),
+                chunk_data["source_file"],
+                chunk_data["chunk_index"],
+                chunk_data["content_hash"],
                 1 if changed else 0,
-                datetime.datetime.utcnow().isoformat(),
+                chunk_data.get("timestamp", datetime.datetime.utcnow().isoformat()),
             ),
         )
         conn.commit()
         conn.close()
 
-    # ------------------------------------------------------------------
-    # Ingestion
-    # ------------------------------------------------------------------
-
     def ingest_all(self, force_reingest: bool = False) -> dict:
         """
-        Reads all .md files from articles_dir sorted chronologically by version,
-        chunks + checksums each file, and upserts new/changed chunks into ChromaDB.
-
-        Returns self.ingestion_stats:
-          { version: {"total": int, "updated": int, "skipped": int} }
+        Ingests all .md and .pdf files in articles_dir chronologically.
         """
-        md_files = sorted(
-            self.articles_dir.glob("*.md"),
+        all_files = list(self.articles_dir.glob("*.md")) + list(self.articles_dir.glob("*.pdf"))
+        
+        all_files = sorted(
+            all_files,
             key=lambda p: _version_date(_parse_version_from_filename(p.name)),
         )
 
-        if not md_files:
-            print(f"   [Warning] No .md files found in {self.articles_dir}")
+        if not all_files:
+            print(f"   [Warning] No .md or .pdf files found in {self.articles_dir}")
             return {}
 
-        print(f"\n[KB] Ingesting {len(md_files)} versioned articles into ChromaDB ...")
+        print(f"\n[KB] Ingesting {len(all_files)} versioned documents (PDF & MD) into ChromaDB ...")
 
-        for md_path in md_files:
-            version = _parse_version_from_filename(md_path.name)
+        for file_path in all_files:
+            version = _parse_version_from_filename(file_path.name)
             v_date = _version_date(version)
-            source_file = md_path.name
+            source_file = file_path.name
 
-            raw_text = md_path.read_text(encoding="utf-8", errors="replace")
-            chunks = _chunk_text(raw_text)
+            # Process file according to extension
+            if file_path.suffix.lower() == ".pdf":
+                from ingestion.pdf_processor import process_pdf_file
+                chunks_raw = process_pdf_file(str(file_path))
+            else:
+                doc_name = file_path.stem.replace("_", " ").replace("Release ", "").strip()
+                raw_text = file_path.read_text(encoding="utf-8", errors="replace")
+                md_chunks = _chunk_text(raw_text)
+                now_iso = datetime.datetime.utcnow().isoformat()
+                chunks_raw = []
+                for idx, chunk in enumerate(md_chunks):
+                    c_hash = _sha256(chunk)
+                    chunks_raw.append({
+                        "chunk_id": f"{version}__chunk_{idx}",
+                        "text": chunk,
+                        "document_name": doc_name,
+                        "document_version": version,
+                        "page_number": 1,
+                        "section_header": f"Section {idx+1}",
+                        "content_hash": c_hash,
+                        "timestamp": now_iso,
+                        "source_file": source_file,
+                        "chunk_index": idx,
+                    })
 
-            stats = {"total": len(chunks), "updated": 0, "skipped": 0}
+            stats = {
+                "total": len(chunks_raw),
+                "updated": 0,
+                "skipped": 0,
+                "embeddings_generated": 0,
+                "db_operations": 0
+            }
 
             ids_to_add = []
             docs_to_add = []
             embs_to_add = []
             metas_to_add = []
 
-            for idx, chunk in enumerate(chunks):
-                checksum = _sha256(chunk)
-                logical_key = (source_file, idx)
-                prior_checksum = self._get_prior_checksum(logical_key)
-                chunk_id = f"{version}__chunk_{idx}"
-
-                changed = (prior_checksum is None) or (prior_checksum != checksum)
+            for chunk_item in chunks_raw:
+                c_hash = chunk_item["content_hash"]
+                prior_checksum = self._get_prior_checksum(source_file, chunk_item["chunk_index"])
+                changed = (prior_checksum is None) or (prior_checksum != c_hash)
 
                 if changed or force_reingest:
-                    # Embed this chunk
-                    embedding = self.embed_model.encode([chunk])[0].tolist()
-                    ids_to_add.append(chunk_id)
-                    docs_to_add.append(chunk)
+                    cached_emb = self._get_cached_embedding(c_hash)
+                    if cached_emb is not None:
+                        embedding = cached_emb
+                    else:
+                        embedding = self.embed_model.encode([chunk_item["text"]])[0].tolist()
+                        self._save_cached_embedding(c_hash, embedding)
+                        stats["embeddings_generated"] += 1
+
+                    ids_to_add.append(chunk_item["chunk_id"])
+                    docs_to_add.append(chunk_item["text"])
                     embs_to_add.append(embedding)
                     metas_to_add.append({
-                        "version": version,
+                        "document_name": chunk_item["document_name"],
+                        "version": chunk_item["document_version"],
                         "version_date": v_date.isoformat(),
+                        "page_number": chunk_item["page_number"],
+                        "section_header": chunk_item["section_header"],
+                        "chunk_id": chunk_item["chunk_id"],
+                        "content_hash": chunk_item["content_hash"],
+                        "timestamp": chunk_item["timestamp"],
                         "source_file": source_file,
-                        "chunk_index": idx,
-                        "checksum": checksum,
+                        "chunk_index": chunk_item["chunk_index"],
                         "changed": 1 if changed else 0,
                     })
                     stats["updated"] += 1
                 else:
                     stats["skipped"] += 1
 
-                self._record_chunk(
-                    chunk_id, version, v_date, source_file, idx, checksum, changed
-                )
+                self._record_chunk(chunk_item, changed, v_date)
 
-            # Batch upsert into ChromaDB
             if ids_to_add:
                 self.collection.upsert(
                     ids=ids_to_add,
@@ -299,15 +381,17 @@ class VersionedKBManager:
                     embeddings=embs_to_add,
                     metadatas=metas_to_add,
                 )
+                stats["db_operations"] += len(ids_to_add)
 
             self.ingestion_stats[version] = stats
             print(
-                f"   [{version}]  {stats['total']} chunks total | "
-                f"{stats['updated']} re-embedded | {stats['skipped']} unchanged (skipped)"
+                f"   [{version}] ({file_path.name})  {stats['total']} chunks total | "
+                f"{stats['updated']} re-embedded | {stats['skipped']} unchanged"
             )
 
         print(f"   [KB] Ingestion complete. Total collection size: {self.collection.count()} chunks.")
         return self.ingestion_stats
+
 
     # ------------------------------------------------------------------
     # Query helpers for metrics

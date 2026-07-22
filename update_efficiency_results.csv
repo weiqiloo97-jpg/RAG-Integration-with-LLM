@@ -1,0 +1,3 @@
+experiment_type,execution_time,chunks_processed,embeddings_generated
+Full Re-indexing,181.873,1528,1528
+Incremental Update,148.7444,1528,889

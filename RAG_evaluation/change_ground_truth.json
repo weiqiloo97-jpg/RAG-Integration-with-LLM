@@ -1,0 +1,94 @@
+{
+  "version_pairs": [
+    {
+      "old_version": "v5.2.3",
+      "new_version": "v5.3.1",
+      "source_document": "twbs_bootstrap",
+      "added_chunks_count": 5,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 4,
+      "total_actual_changes": 9
+    },
+    {
+      "old_version": "v5.3.1",
+      "new_version": "v5.3.2",
+      "source_document": "twbs_bootstrap",
+      "added_chunks_count": 3,
+      "deleted_chunks_count": 1,
+      "modified_chunks_count": 2,
+      "total_actual_changes": 6
+    },
+    {
+      "old_version": "v5.3.2",
+      "new_version": "v5.3.3",
+      "source_document": "twbs_bootstrap",
+      "added_chunks_count": 4,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 5,
+      "total_actual_changes": 9
+    },
+    {
+      "old_version": "v5.3.3",
+      "new_version": "v5.3.4",
+      "source_document": "twbs_bootstrap",
+      "added_chunks_count": 8,
+      "deleted_chunks_count": 2,
+      "modified_chunks_count": 10,
+      "total_actual_changes": 20
+    },
+    {
+      "old_version": "v5.3.4",
+      "new_version": "v5.3.5",
+      "source_document": "twbs_bootstrap",
+      "added_chunks_count": 1,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 1,
+      "total_actual_changes": 2
+    },
+    {
+      "old_version": "v2.4.7",
+      "new_version": "v3.3.4",
+      "source_document": "Apache Spark Release Notes",
+      "added_chunks_count": 15,
+      "deleted_chunks_count": 5,
+      "modified_chunks_count": 12,
+      "total_actual_changes": 32
+    },
+    {
+      "old_version": "v3.3.4",
+      "new_version": "v3.4.4",
+      "source_document": "Apache Spark Release Notes",
+      "added_chunks_count": 12,
+      "deleted_chunks_count": 4,
+      "modified_chunks_count": 10,
+      "total_actual_changes": 26
+    },
+    {
+      "old_version": "v3.4.4",
+      "new_version": "v3.5.3",
+      "source_document": "Apache Spark Release Notes",
+      "added_chunks_count": 10,
+      "deleted_chunks_count": 2,
+      "modified_chunks_count": 8,
+      "total_actual_changes": 20
+    },
+    {
+      "old_version": "v3.5.3",
+      "new_version": "v3.5.4",
+      "source_document": "Apache Spark Release Notes",
+      "added_chunks_count": 8,
+      "deleted_chunks_count": 1,
+      "modified_chunks_count": 6,
+      "total_actual_changes": 15
+    },
+    {
+      "old_version": "v3.5.4",
+      "new_version": "v3.5.5",
+      "source_document": "Apache Spark Release Notes",
+      "added_chunks_count": 7,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 5,
+      "total_actual_changes": 12
+    }
+  ]
+}

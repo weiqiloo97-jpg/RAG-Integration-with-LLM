@@ -31,7 +31,14 @@ _VERSION_DATES = {
     "v5.3.3": datetime.date(2024, 2, 20),
     "v5.3.4": datetime.date(2025, 6, 1),
     "v5.3.5": datetime.date(2025, 6, 8),
+    "v2.4.7": datetime.date(2020, 9, 12),
+    "v3.3.4": datetime.date(2023, 12, 1),
+    "v3.4.4": datetime.date(2024, 10, 20),
+    "v3.5.3": datetime.date(2024, 9, 25),
+    "v3.5.4": datetime.date(2024, 12, 18),
+    "v3.5.5": datetime.date(2025, 3, 1),
 }
+
 
 
 def _vdate(version: str) -> datetime.date:
@@ -261,9 +268,21 @@ def compute_change_detection_accuracy(
 
     conn.close()
 
+    valid_precision = [
+        r["precision"]
+        for r in pair_results
+        if r.get("precision") is not None
+    ]
+
+    valid_recall = [
+        r["recall"]
+        for r in pair_results
+        if r.get("recall") is not None
+    ]
+
     macro_f1 = float(np.mean(all_f1)) if all_f1 else 0.0
-    macro_prec = float(np.mean([r["precision"] for r in pair_results if "precision" in r])) if pair_results else 0.0
-    macro_rec = float(np.mean([r["recall"] for r in pair_results if "recall" in r])) if pair_results else 0.0
+    macro_prec = float(np.mean(valid_precision)) if valid_precision else 0.0
+    macro_rec = float(np.mean(valid_recall)) if valid_recall else 0.0
 
     return {
         "change_detection_f1": round(macro_f1, 4),

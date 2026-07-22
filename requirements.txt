@@ -1,0 +1,10 @@
+# Versioned RAG System Requirements
+chromadb>=0.4.20
+sentence-transformers>=2.2.2
+pypdf>=3.17.0
+pandas>=2.0.0
+numpy>=1.24.0
+httpx>=0.25.0
+torch>=2.0.0
+rank-bm25>=0.2.2
+

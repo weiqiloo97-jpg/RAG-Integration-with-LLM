@@ -1,0 +1,101 @@
+query_id,query,expected_version,retrieved_version,retrieved_chunks,temporal_leak,retrieval_latency_ms
+q1,What color mode improvements were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,52.655
+q2,What CSS utility classes were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,29.657
+q3,What Sass variable defaults were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,30.414
+q4,What JavaScript selector engine were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,28.111
+q5,What modal backdrop focus were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,23.724
+q6,What dropdown positioning were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,27.516
+q7,What tooltip boundary alignment were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,27.371
+q8,What navbar dark mode were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,27.757
+q9,What popover arrow offsets were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,28.423
+q10,What flexbox grid spacing were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,25.646
+q11,What form control validation styling were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,25.923
+q12,What button component contrast were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,23.458
+q13,What badge padding defaults were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,32.674
+q14,What carousel transition timers were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,31.996
+q15,What accordion item collapse were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,False,23.008
+q16,What color mode improvements were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,24.626
+q17,What CSS utility classes were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,21.688
+q18,What Sass variable defaults were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,21.678
+q19,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,25.746
+q20,What modal backdrop focus were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,22.74
+q21,What dropdown positioning were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,24.617
+q22,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,23.478
+q23,What navbar dark mode were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,23.559
+q24,What popover arrow offsets were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,21.916
+q25,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,23.09
+q26,What form control validation styling were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,22.086
+q27,What button component contrast were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,23.585
+q28,What badge padding defaults were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,22.547
+q29,What carousel transition timers were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,26.344
+q30,What accordion item collapse were introduced or modified in Bootstrap v5.3.1?,v5.3.1,v5.3.1,5,False,24.263
+q31,What color mode improvements were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,22.63
+q32,What CSS utility classes were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,22.95
+q33,What Sass variable defaults were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,25.011
+q34,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,29.287
+q35,What modal backdrop focus were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,22.198
+q36,What dropdown positioning were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,21.333
+q37,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,23.074
+q38,What navbar dark mode were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,25.349
+q39,What popover arrow offsets were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,29.546
+q40,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,62.067
+q41,What form control validation styling were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,55.335
+q42,What button component contrast were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,45.08
+q43,What badge padding defaults were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,45.774
+q44,What carousel transition timers were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,43.857
+q45,What accordion item collapse were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,False,32.712
+q46,What color mode improvements were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,32.223
+q47,What CSS utility classes were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,29.536
+q48,What Sass variable defaults were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,42.056
+q49,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,25.208
+q50,What modal backdrop focus were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,25.826
+q51,What dropdown positioning were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,32.074
+q52,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,30.264
+q53,What navbar dark mode were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,30.805
+q54,What popover arrow offsets were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,35.579
+q55,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,33.774
+q56,What form control validation styling were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,27.78
+q57,What button component contrast were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,27.754
+q58,What badge padding defaults were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,34.945
+q59,What carousel transition timers were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,30.508
+q60,What accordion item collapse were introduced or modified in Bootstrap v5.3.3?,v5.3.3,v5.3.3,5,False,28.414
+q61,What color mode improvements were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,33.147
+q62,What CSS utility classes were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,27.759
+q63,What Sass variable defaults were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,23.968
+q64,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,24.179
+q65,What modal backdrop focus were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,23.5
+q66,What dropdown positioning were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,27.481
+q67,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,25.827
+q68,What navbar dark mode were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,25.743
+q69,What popover arrow offsets were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,23.487
+q70,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,24.4
+q71,What form control validation styling were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,23.1
+q72,What button component contrast were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,23.733
+q73,What badge padding defaults were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,24.272
+q74,What carousel transition timers were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,27.853
+q75,What accordion item collapse were introduced or modified in Bootstrap v5.3.4?,v5.3.4,v5.3.4,5,False,22.917
+q76,What color mode improvements were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,25.029
+q77,What CSS utility classes were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,22.345
+q78,What Sass variable defaults were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,28.216
+q79,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,23.513
+q80,What modal backdrop focus were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,23.339
+q81,What dropdown positioning were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,24.647
+q82,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,23.086
+q83,What navbar dark mode were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,30.53
+q84,What popover arrow offsets were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,24.221
+q85,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,26.082
+q86,What form control validation styling were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,25.431
+q87,What button component contrast were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,22.48
+q88,What badge padding defaults were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,24.692
+q89,What carousel transition timers were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,25.9
+q90,What accordion item collapse were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,False,24.489
+q91,What memory management optimizations were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,27.848
+q92,What structured streaming watermark fixes were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,26.477
+q93,What PySpark DataFrame API methods were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,25.687
+q94,What SQL query planner rules were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,26.628
+q95,What K8s executor pod scaling were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,29.166
+q96,What Parquet reader column pruning were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,27.506
+q97,What Orc file format handling were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,31.462
+q98,What ANSI SQL compatibility mode were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,25.037
+q99,What delta lake protocol sync were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,34.98
+q100,What spark submit script flags were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,False,25.604
