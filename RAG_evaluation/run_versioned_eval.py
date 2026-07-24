@@ -46,7 +46,7 @@ from evaluation.change_detector import evaluate_change_detection
 from experiments.update_experiment import run_single_iteration
 from evaluation.tier3_metrics import compute_latency_percentiles
 from evaluation.error_analysis import generate_error_analysis
-from evaluation.query_category import compute_category_metrics
+from evaluation.query_category import compute_category_metrics, print_distribution
 
 
 def _hr(char: str = "=", width: int = 90) -> str:
@@ -290,6 +290,7 @@ def main():
     df_category = pd.DataFrame(category_rows)
     df_category.to_csv(query_category_csv, index=False)
     print(f"   [Saved] query_category_results.csv ({len(df_category)} categories)")
+    print_distribution(category_rows)
 
     # -----------------------------------------------------------------------
     # FINAL METRICS SUMMARY DISPLAY

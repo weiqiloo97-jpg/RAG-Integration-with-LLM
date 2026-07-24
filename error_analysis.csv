@@ -1,0 +1,56 @@
+query_id,query,expected_version,retrieved_version,retrieved_chunks,failure_category,notes
+q1,What color mode improvements were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q2,What CSS utility classes were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q3,What Sass variable defaults were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q4,What JavaScript selector engine were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q5,What modal backdrop focus were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q6,What dropdown positioning were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q7,What tooltip boundary alignment were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q8,What navbar dark mode were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q9,What popover arrow offsets were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q10,What flexbox grid spacing were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q11,What form control validation styling were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q12,What button component contrast were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q13,What badge padding defaults were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q14,What carousel transition timers were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q15,What accordion item collapse were introduced or modified in Bootstrap v5.2.3?,v5.2.3,v5.2.3,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q31,What color mode improvements were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q32,What CSS utility classes were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q33,What Sass variable defaults were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q34,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q35,What modal backdrop focus were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q36,What dropdown positioning were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q37,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q38,What navbar dark mode were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q39,What popover arrow offsets were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q40,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q41,What form control validation styling were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q42,What button component contrast were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q43,What badge padding defaults were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q44,What carousel transition timers were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q45,What accordion item collapse were introduced or modified in Bootstrap v5.3.2?,v5.3.2,v5.3.2,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q76,What color mode improvements were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q77,What CSS utility classes were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q78,What Sass variable defaults were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q79,What JavaScript selector engine were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q80,What modal backdrop focus were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q81,What dropdown positioning were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q82,What tooltip boundary alignment were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q83,What navbar dark mode were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q84,What popover arrow offsets were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q85,What flexbox grid spacing were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q86,What form control validation styling were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q87,What button component contrast were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q88,What badge padding defaults were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q89,What carousel transition timers were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q90,What accordion item collapse were introduced or modified in Bootstrap v5.3.5?,v5.3.5,v5.3.5,1,Sparse Coverage,Only 1/5 chunks retrieved — limited KB coverage for this version.
+q91,What memory management optimizations were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q92,What structured streaming watermark fixes were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q93,What PySpark DataFrame API methods were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q94,What SQL query planner rules were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q95,What K8s executor pod scaling were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q96,What Parquet reader column pruning were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q97,What Orc file format handling were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q98,What ANSI SQL compatibility mode were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q99,What delta lake protocol sync were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
+q100,What spark submit script flags were introduced or modified in Spark v2.4.7?,v2.4.7,v2.4.7,4,Sparse Coverage,Only 4/5 chunks retrieved — limited KB coverage for this version.
