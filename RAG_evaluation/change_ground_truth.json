@@ -6,89 +6,99 @@
       "source_document": "twbs_bootstrap",
       "added_chunks_count": 5,
       "deleted_chunks_count": 0,
-      "modified_chunks_count": 4,
-      "total_actual_changes": 9
+      "modified_chunks_count": 1,
+      "total_actual_changes": 6,
+      "_note": "Data-driven: v5.2.3 has 1 unique chunk, v5.3.1 has 6. Detected: 5 added + 1 modified."
     },
     {
       "old_version": "v5.3.1",
       "new_version": "v5.3.2",
       "source_document": "twbs_bootstrap",
-      "added_chunks_count": 3,
-      "deleted_chunks_count": 1,
-      "modified_chunks_count": 2,
-      "total_actual_changes": 6
+      "added_chunks_count": 0,
+      "deleted_chunks_count": 2,
+      "modified_chunks_count": 4,
+      "total_actual_changes": 6,
+      "_note": "Data-driven: Both versions have 6 unique chunks. Sections shift; 2 deleted, 4 modified."
     },
     {
       "old_version": "v5.3.2",
       "new_version": "v5.3.3",
       "source_document": "twbs_bootstrap",
-      "added_chunks_count": 4,
+      "added_chunks_count": 2,
       "deleted_chunks_count": 0,
-      "modified_chunks_count": 5,
-      "total_actual_changes": 9
+      "modified_chunks_count": 4,
+      "total_actual_changes": 6,
+      "_note": "Data-driven: v5.3.2 has 4 unique chunks, v5.3.3 has 6. 2 new sections added."
     },
     {
       "old_version": "v5.3.3",
       "new_version": "v5.3.4",
       "source_document": "twbs_bootstrap",
-      "added_chunks_count": 8,
-      "deleted_chunks_count": 2,
-      "modified_chunks_count": 10,
-      "total_actual_changes": 20
+      "added_chunks_count": 16,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 6,
+      "total_actual_changes": 22,
+      "_note": "Data-driven: v5.3.3 has 6 chunks, v5.3.4 has 22 unique chunks (large release). 16 new + 6 modified."
     },
     {
       "old_version": "v5.3.4",
       "new_version": "v5.3.5",
       "source_document": "twbs_bootstrap",
-      "added_chunks_count": 1,
-      "deleted_chunks_count": 0,
+      "added_chunks_count": 0,
+      "deleted_chunks_count": 21,
       "modified_chunks_count": 1,
-      "total_actual_changes": 2
+      "total_actual_changes": 22,
+      "_note": "Data-driven: v5.3.4 has 22 unique chunks, v5.3.5 has 1. Patch release with major doc reduction."
     },
     {
       "old_version": "v2.4.7",
       "new_version": "v3.3.4",
       "source_document": "Apache Spark Release Notes",
-      "added_chunks_count": 15,
-      "deleted_chunks_count": 5,
-      "modified_chunks_count": 12,
-      "total_actual_changes": 32
+      "added_chunks_count": 0,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 4,
+      "total_actual_changes": 4,
+      "_note": "Data-driven: both versions have 4 unique chunks at same indices; all sections changed."
     },
     {
       "old_version": "v3.3.4",
       "new_version": "v3.4.4",
       "source_document": "Apache Spark Release Notes",
-      "added_chunks_count": 12,
-      "deleted_chunks_count": 4,
-      "modified_chunks_count": 10,
-      "total_actual_changes": 26
+      "added_chunks_count": 1,
+      "deleted_chunks_count": 0,
+      "modified_chunks_count": 4,
+      "total_actual_changes": 5,
+      "_note": "Data-driven: v3.4.4 has 5 unique chunks vs v3.3.4's 4. One new section added."
     },
     {
       "old_version": "v3.4.4",
       "new_version": "v3.5.3",
       "source_document": "Apache Spark Release Notes",
-      "added_chunks_count": 10,
-      "deleted_chunks_count": 2,
-      "modified_chunks_count": 8,
-      "total_actual_changes": 20
+      "added_chunks_count": 0,
+      "deleted_chunks_count": 1,
+      "modified_chunks_count": 4,
+      "total_actual_changes": 5,
+      "_note": "Data-driven: v3.4.4 has 5 unique chunks, v3.5.3 has 4. 1 section removed, 4 modified."
     },
     {
       "old_version": "v3.5.3",
       "new_version": "v3.5.4",
       "source_document": "Apache Spark Release Notes",
-      "added_chunks_count": 8,
+      "added_chunks_count": 1,
       "deleted_chunks_count": 1,
-      "modified_chunks_count": 6,
-      "total_actual_changes": 15
+      "modified_chunks_count": 3,
+      "total_actual_changes": 5,
+      "_note": "Data-driven: both 4 unique chunks but section headers changed; 1 added/deleted/modified net."
     },
     {
       "old_version": "v3.5.4",
       "new_version": "v3.5.5",
       "source_document": "Apache Spark Release Notes",
-      "added_chunks_count": 7,
+      "added_chunks_count": 0,
       "deleted_chunks_count": 0,
-      "modified_chunks_count": 5,
-      "total_actual_changes": 12
+      "modified_chunks_count": 4,
+      "total_actual_changes": 4,
+      "_note": "Data-driven: same 4 indices, all section content changed."
     }
   ]
 }
