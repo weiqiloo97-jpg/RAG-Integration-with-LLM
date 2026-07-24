@@ -193,7 +193,80 @@ These statistics evaluate normal and worst-case retrieval performance.
 
 ---
 
-# 3. Build Instruction
+# 4. Additional Performance Metrics
+
+Three supplementary analysis modules run automatically after the core evaluation and produce three new CSV outputs.
+
+---
+
+## Error Analysis
+
+Examines every failed retrieval and classifies the failure into one of the following categories:
+
+| Category | Description |
+|---|---|
+| No Relevant Chunk Retrieved | Retriever returned 0 chunks |
+| Wrong Version Retrieved | Chunks returned but version does not match expected |
+| Ambiguous Query | Query lacks a version anchor or specific topic keyword |
+| Wrong Chunk Retrieved | Version matched but content is off-topic |
+| Retrieval Correct but LLM Answer Incorrect | Stage 2 only — correct chunk retrieved but LLM gave wrong answer |
+
+### Output: `error_analysis.csv`
+
+Columns: `query_id`, `query`, `expected_version`, `retrieved_version`, `failure_category`, `notes`
+
+Example console summary:
+
+```
+Wrong Version Retrieved        : 18%
+Wrong Chunk Retrieved          : 41%
+Ambiguous Query                : 24%
+No Relevant Chunk              : 17%
+```
+
+---
+
+## Query Category Analysis
+
+Classifies every evaluation query into one of four categories and reports retrieval performance separately for each:
+
+| Category | Description |
+|---|---|
+| Version Query | Explicitly targets a specific version number or release |
+| Comparison Query | Asks to compare versions or features |
+| Feature/Change Query | Asks what changed, was introduced, or was fixed |
+| Fact Query | General factual question (fallback) |
+
+### Output: `query_category_results.csv`
+
+Columns: `category`, `number_of_queries`, `retrieval_accuracy`, `temporal_leakage_rate`, `average_latency_ms`
+
+This analysis shows which query types are easiest and hardest for Versioned RAG.
+
+---
+
+## Retrieval Time Breakdown
+
+Instead of reporting only total latency, this analysis measures the execution time of each retrieval stage per query:
+
+| Stage | Description |
+|---|---|
+| Embedding Generation | Time to encode the query string |
+| Vector Retrieval | ChromaDB similarity search time |
+| Reranking | 0 ms (no reranker in current pipeline) |
+| LLM Generation | Stage 2 only — LLM answer generation time |
+| Total | End-to-end wall-clock time |
+
+### Output: `retrieval_breakdown.csv`
+
+Columns: `query_id`, `embedding_ms`, `retrieval_ms`, `reranking_ms`, `llm_ms`, `total_ms`
+
+Stage averages are also printed to the console after the Stage 1 evaluation loop.
+
+---
+
+
+# 5. Build Instruction
 
 Windows PowerShell:
 ```powershell

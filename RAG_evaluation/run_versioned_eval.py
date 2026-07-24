@@ -45,6 +45,8 @@ from generation.answer_generator import FallbackLLM, OllamaLLM
 from evaluation.change_detector import evaluate_change_detection
 from experiments.update_experiment import run_single_iteration
 from evaluation.tier3_metrics import compute_latency_percentiles
+from evaluation.error_analysis import generate_error_analysis
+from evaluation.query_category import compute_category_metrics
 
 
 def _hr(char: str = "=", width: int = 90) -> str:
@@ -82,6 +84,11 @@ def main():
     update_eff_csv = os.path.join(PROJECT_ROOT, "update_efficiency_results.csv")
     latency_csv = os.path.join(PROJECT_ROOT, "latency_results.csv")
 
+    # New CSV output paths
+    error_analysis_csv = os.path.join(PROJECT_ROOT, "error_analysis.csv")
+    query_category_csv = os.path.join(PROJECT_ROOT, "query_category_results.csv")
+    retrieval_breakdown_csv = os.path.join(PROJECT_ROOT, "retrieval_breakdown.csv")
+
     if not os.path.isdir(articles_dir):
         print(f"[-] versioned_articles folder not found at: {articles_dir}")
         sys.exit(1)
@@ -112,6 +119,7 @@ def main():
 
     query_results_list = []
     latency_results_list = []
+    retrieval_breakdown_list = []
 
     leaky_count = 0
 
@@ -121,11 +129,19 @@ def main():
         exp_version = item.get("expected_version", item.get("target_version", "v5.3.1"))
         src_doc = item.get("source_document", "Unknown")
 
-        t0 = time.perf_counter()
-        docs = retriever.retrieve(q_text, top_k=5, target_version=exp_version, version_mode="exact")
+        # Use retrieve_timed() to capture per-stage latency alongside docs
+        docs, timing = retriever.retrieve_timed(q_text, top_k=5, target_version=exp_version, version_mode="exact")
         if not docs:
-            docs = retriever.retrieve(q_text, top_k=5)
-        latency_ms = round((time.perf_counter() - t0) * 1000.0, 3)
+            docs, timing2 = retriever.retrieve_timed(q_text, top_k=5)
+            # Merge timings: sum both calls so total_ms covers the full retrieval path
+            timing = {
+                "embedding_ms": round(timing["embedding_ms"] + timing2["embedding_ms"], 3),
+                "retrieval_ms": round(timing["retrieval_ms"] + timing2["retrieval_ms"], 3),
+                "reranking_ms": 0.0,
+                "llm_ms": 0.0,
+                "total_ms": round(timing["total_ms"] + timing2["total_ms"], 3),
+            }
+        latency_ms = timing["total_ms"]
 
         retrieved_versions = sorted(list({d.get("metadata", {}).get("version", "?") for d in docs}))
         retrieved_version_str = ", ".join(retrieved_versions) if retrieved_versions else "none"
@@ -142,7 +158,6 @@ def main():
             except Exception:
                 d_date = _version_date(d_ver)
             if d_date > exp_date:
-
                 temporal_leak = True
                 break
 
@@ -164,6 +179,15 @@ def main():
             "latency_ms": latency_ms,
         })
 
+        retrieval_breakdown_list.append({
+            "query_id": q_id,
+            "embedding_ms": timing["embedding_ms"],
+            "retrieval_ms": timing["retrieval_ms"],
+            "reranking_ms": timing["reranking_ms"],
+            "llm_ms": timing["llm_ms"],
+            "total_ms": timing["total_ms"],
+        })
+
     # Save Stage 1 CSVs
     df_query_res = pd.DataFrame(query_results_list)
     df_query_res.to_csv(query_results_csv, index=False)
@@ -178,6 +202,20 @@ def main():
     lat_stats = compute_latency_percentiles(latencies_sec)
 
     leak_rate = (leaky_count / len(queries_data)) * 100.0 if queries_data else 0.0
+
+    # --- New Metric 3: Save Retrieval Breakdown CSV ---
+    df_breakdown = pd.DataFrame(retrieval_breakdown_list)
+    df_breakdown.to_csv(retrieval_breakdown_csv, index=False)
+    print(f"   [Saved] retrieval_breakdown.csv ({len(df_breakdown)} rows)")
+
+    # Compute and print breakdown averages
+    avg_emb_ms = float(np.mean(df_breakdown["embedding_ms"])) if len(df_breakdown) > 0 else 0.0
+    avg_ret_ms = float(np.mean(df_breakdown["retrieval_ms"])) if len(df_breakdown) > 0 else 0.0
+    avg_tot_ms = float(np.mean(df_breakdown["total_ms"])) if len(df_breakdown) > 0 else 0.0
+    print(f"   [Breakdown Averages] Embedding: {avg_emb_ms:.2f} ms | "
+          f"Vector Retrieval: {avg_ret_ms:.2f} ms | "
+          f"Reranking: 0.00 ms | LLM: 0.00 ms | "
+          f"Total: {avg_tot_ms:.2f} ms")
 
     # --- Step 3: Stage 2 LLM Answer Generation (Subset of 20 Queries) ---
     print("\n[Step 3] Running Stage 2 answer generation on 20 query subset...")
@@ -232,6 +270,27 @@ def main():
     df_update_res.to_csv(update_eff_csv, index=False)
     print(f"   [Saved] update_efficiency_results.csv ({len(df_update_res)} rows)")
 
+    # --- New Metric 1: Error Analysis ---
+    print("\n[Step 6] Running Error Analysis on failed retrievals...")
+    error_rows, error_summary = generate_error_analysis(query_results_list, queries_data)
+    df_error = pd.DataFrame(error_rows)
+    df_error.to_csv(error_analysis_csv, index=False)
+    print(f"   [Saved] error_analysis.csv ({len(df_error)} failed queries analysed)")
+
+    if error_summary:
+        print("   [Error Breakdown]")
+        for cat, pct in sorted(error_summary.items(), key=lambda x: -x[1]):
+            print(f"     {cat:<45}: {pct:.1f}%")
+    else:
+        print("   [Error Analysis] No retrieval failures detected.")
+
+    # --- New Metric 2: Query Category Analysis ---
+    print("\n[Step 7] Running Query Category Analysis...")
+    category_rows = compute_category_metrics(query_results_list, queries_data)
+    df_category = pd.DataFrame(category_rows)
+    df_category.to_csv(query_category_csv, index=False)
+    print(f"   [Saved] query_category_results.csv ({len(df_category)} categories)")
+
     # -----------------------------------------------------------------------
     # FINAL METRICS SUMMARY DISPLAY
     # -----------------------------------------------------------------------
@@ -262,11 +321,20 @@ def main():
         print(_table_row(*row, widths=w))
 
     print(_hr())
+    print("\nAdditional analyses available:")
+    print("  \u2022 Error Analysis")
+    print("  \u2022 Query Category Analysis")
+    print("  \u2022 Detailed latency breakdown")
     print("\n[Generated CSV Outputs]")
-    print(f"  1. {query_results_csv}")
-    print(f"  2. {change_detection_csv}")
-    print(f"  3. {update_eff_csv}")
-    print(f"  4. {latency_csv}")
+    print(f"  Existing:")
+    print(f"    1. {query_results_csv}")
+    print(f"    2. {change_detection_csv}")
+    print(f"    3. {update_eff_csv}")
+    print(f"    4. {latency_csv}")
+    print(f"  New:")
+    print(f"    5. {error_analysis_csv}")
+    print(f"    6. {query_category_csv}")
+    print(f"    7. {retrieval_breakdown_csv}")
     print("\n" + _hr())
     print("   [Done] Versioned RAG Evaluation Framework execution complete!")
     print(_hr())

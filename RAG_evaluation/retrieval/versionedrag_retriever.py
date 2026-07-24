@@ -164,6 +164,111 @@ class VersionedRAGRetriever:
         return retrieved[:top_k]
 
     # ------------------------------------------------------------------
+    # Timed retrieval (returns docs + per-stage timing breakdown)
+    # ------------------------------------------------------------------
+
+    def retrieve_timed(
+        self,
+        query: str,
+        top_k: int = 5,
+        target_version=None,
+        version_mode: str = "exact",
+    ) -> tuple:
+        """
+        Identical to ``retrieve()`` but additionally measures and returns
+        per-stage execution times.
+
+        Returns
+        -------
+        docs : list
+            Same format as ``retrieve()``.
+        timing : dict
+            {
+                "embedding_ms": float,   # query embedding generation
+                "retrieval_ms": float,   # ChromaDB vector query
+                "reranking_ms": float,   # always 0.0 (no reranker in pipeline)
+                "llm_ms":       float,   # always 0.0 (filled by caller for Stage 2)
+                "total_ms":     float,
+            }
+        """
+        import time as _time
+
+        t_start = _time.perf_counter()
+
+        # --- Stage: Embedding Generation ---
+        t0 = _time.perf_counter()
+        query_embedding = self.embed_model.encode([query]).tolist()
+        embedding_ms = (_time.perf_counter() - t0) * 1000.0
+
+        # --- Stage: Build filter ---
+        where_filter = self._build_filter(target_version, version_mode)
+        n_query = (
+            min(top_k * 3, max(top_k, self.collection.count()))
+            if where_filter
+            else top_k
+        )
+
+        if n_query == 0:
+            total_ms = (_time.perf_counter() - t_start) * 1000.0
+            self.latencies.append(total_ms / 1000.0)
+            timing = {
+                "embedding_ms": round(embedding_ms, 3),
+                "retrieval_ms": 0.0,
+                "reranking_ms": 0.0,
+                "llm_ms": 0.0,
+                "total_ms": round(total_ms, 3),
+            }
+            return [], timing
+
+        # --- Stage: Vector Retrieval ---
+        t0 = _time.perf_counter()
+        try:
+            results = self.collection.query(
+                query_embeddings=query_embedding,
+                n_results=min(n_query, self.collection.count()),
+                where=where_filter if where_filter else None,
+                include=["documents", "metadatas", "distances"],
+            )
+        except Exception:
+            results = self.collection.query(
+                query_embeddings=query_embedding,
+                n_results=min(top_k, self.collection.count()),
+                include=["documents", "metadatas", "distances"],
+            )
+        retrieval_ms = (_time.perf_counter() - t0) * 1000.0
+
+        total_ms = (_time.perf_counter() - t_start) * 1000.0
+        self.latencies.append(total_ms / 1000.0)
+
+        timing = {
+            "embedding_ms": round(embedding_ms, 3),
+            "retrieval_ms": round(retrieval_ms, 3),
+            "reranking_ms": 0.0,
+            "llm_ms": 0.0,
+            "total_ms": round(total_ms, 3),
+        }
+
+        if not results or not results["ids"] or not results["ids"][0]:
+            return [], timing
+
+        ids = results["ids"][0]
+        documents = results["documents"][0]
+        metadatas = results["metadatas"][0]
+        distances = results["distances"][0]
+
+        retrieved = []
+        for i in range(len(ids)):
+            similarity = 1.0 - distances[i]
+            retrieved.append({
+                "id": ids[i],
+                "text": documents[i],
+                "metadata": metadatas[i] or {},
+                "score": round(similarity, 4),
+            })
+
+        return retrieved[:top_k], timing
+
+    # ------------------------------------------------------------------
     # Filter builder
     # ------------------------------------------------------------------
 
