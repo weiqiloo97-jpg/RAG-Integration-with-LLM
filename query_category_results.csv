@@ -1,2 +1,0 @@
-category,number_of_queries,successful_retrievals,retrieval_accuracy,temporal_leakage_rate,average_latency_ms,p50_latency_ms,p95_latency_ms,average_retrieved_chunks,description
-Version-Specific Query,100,100,100.0,0.0,27.0,23.3,31.2,3.5,Queries targeting a specific document version
